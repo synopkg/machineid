@@ -13,18 +13,22 @@ import (
 // machineID returns the uuid returned by `ioreg -rd1 -c IOPlatformExpertDevice`.
 // If there is an error running the commad an empty string is returned.
 func machineID() (string, error) {
+	return IoregValue("IOPlatformUUID")
+}
+
+func IoregValue(key string) (string, error) {
 	buf, err := RunIoreg()
 	if err != nil {
 		return "", err
 	}
-	id, err := ExtractID(buf.String(), "IOPlatformUUID")
+	id, err := extractID(buf.String(), key)
 	if err != nil {
 		return "", err
 	}
 	return trim(id), nil
 }
 
-func ExtractID(lines, key string) (string, error) {
+func extractID(lines, key string) (string, error) {
 	for _, line := range strings.Split(lines, "\n") {
 		if strings.Contains(line, key) {
 			parts := strings.SplitAfter(line, `" = "`)
