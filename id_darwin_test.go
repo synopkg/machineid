@@ -1,3 +1,4 @@
+//go:build darwin
 // +build darwin
 
 package machineid
@@ -33,7 +34,7 @@ const sampleOutput = `+-o MacBookPro12,1  <class IOPlatformExpertDevice, id 0x10
 
 func Test_extractID(t *testing.T) {
 	want := "A3344D1DD-1234-22A1-B123-11AB1C11D111"
-	got, err := extractID(sampleOutput)
+	got, err := ExtractID(sampleOutput, "IOPlatformUUID")
 	if err != nil {
 		t.Error(err)
 	}
@@ -43,7 +44,7 @@ func Test_extractID(t *testing.T) {
 }
 
 func Test_extractID_invalidInput(t *testing.T) {
-	got, err := extractID("invalid input")
+	got, err := ExtractID("invalid input", "IOPlatformUUID")
 	if err == nil {
 		t.Error("expected error, got none")
 	}
